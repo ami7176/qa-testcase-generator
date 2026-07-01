@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QA Test Case Generator</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- ================= Header ================= -->
+
+        <header>
+
+            <div class="logo">
+                <i class="fa-solid fa-flask"></i>
+            </div>
+
+            <h1>QA Test Case Generator</h1>
+
+            <p>
+                Transform Requirements into Structured TestLink-Style Test Cases
+            </p>
+
+        </header>
+
+        <!-- ================= Requirement ================= -->
+
+        <section class="card">
+
+            <div class="card-title">
+
+                <i class="fa-solid fa-file-lines"></i>
+
+                <span>User Story / Requirement</span>
+
+            </div>
+
+            <textarea id="requirement"
+                placeholder="Example:
+
+As a User,
+
+I should be able to login using valid username and password.
+
+So that I can access the Dashboard.
+
+Press Ctrl + Enter to Generate Test Cases."></textarea>
+
+            <div class="buttons">
+
+                <button id="generateBtn">
+
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+                    Generate Test Cases
+
+                </button>
+
+                <button id="clearBtn">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                    Clear
+
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- ================= Output ================= -->
+
+        <section class="card">
+
+            <div class="output-header">
+
+                <div class="card-title">
+                    <i class="fa-solid fa-table-list"></i>
+                    <span>Generated Test Cases</span>
+                </div>
+
+                <div class="action-buttons">
+
+                    <button id="copyBtn" class="icon-btn" data-tooltip="Copy">
+                        <i class="fa-solid fa-copy"></i>
+                    </button>
+
+                    <button id="downloadBtn" class="icon-btn" data-tooltip="Download">
+                        <i class="fa-solid fa-download"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- Loading -->
+
+            <div id="loading" class="loading hidden">
+
+                <div class="spinner"></div>
+
+                <span>Generating Professional Test Cases...</span>
+
+            </div>
+
+            <!-- Error -->
+
+            <div id="errorBox" class="error hidden"></div>
+
+            <!-- Table -->
+
+            <div id="tableWrapper">
+
+                <table id="resultTable">
+
+                    <thead>
+
+                        <tr>
+
+                            <th style="width:70px;">ID</th>
+                            <th style="min-width:260px;">Title</th>
+                            <th style="min-width:150px;">Module</th>
+                            <th style="width:110px;">Priority</th>
+                            <th style="min-width:220px;">Preconditions</th>
+                            <th style="min-width:420px;">Steps</th>
+                            <th style="min-width:300px;">Expected Result</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tableBody">
+
+                        <tr>
+
+                            <td colspan="7" class="empty">
+
+                                <i class="fa-regular fa-folder-open"></i>
+
+                                <br><br>
+
+                                No Test Cases Generated
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- ================= Toast Notification ================= -->
+
+    <div id="toast" class="toast">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <span id="toastMessage">Success</span>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
