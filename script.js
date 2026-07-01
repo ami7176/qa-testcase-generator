@@ -59,7 +59,7 @@ async function generateTestCases() {
 
     try {
 
-        const response = await fetch("http://localhost:3000/generate", {
+        const response = await fetch(`${window.location.origin}/generate`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
