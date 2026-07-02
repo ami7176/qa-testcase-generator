@@ -80,24 +80,66 @@ header{
 
 .logo{
 
-    width:75px;
-    height:75px;
+    width:78px;
+    height:78px;
 
-    margin:auto;
-
-    border-radius:50%;
+    margin:auto auto 18px;
 
     display:flex;
-    align-items:center;
     justify-content:center;
+    align-items:center;
 
-    background:linear-gradient(135deg,var(--primary),var(--primary2));
+    border-radius:20px;
 
-    font-size:30px;
+    background:linear-gradient(135deg,#7c3aed,#5b21b6);
 
-    box-shadow:0 0 30px rgba(124,58,237,.45);
+    color:#fff;
 
-    margin-bottom:15px;
+    font-size:34px;
+
+    box-shadow:
+        0 0 25px rgba(124,58,237,.35),
+        inset 0 1px 1px rgba(255,255,255,.15);
+
+    transition:.3s;
+
+}
+
+.logo:hover{
+
+    animation:logoSwing .8s ease-in-out;
+
+    transform:translateY(-4px);
+
+    box-shadow:
+        0 0 40px rgba(124,58,237,.60);
+
+}
+@keyframes logoSwing{
+
+    0%{
+        transform:translateY(-4px) rotate(0deg);
+    }
+
+    20%{
+        transform:translateY(-4px) rotate(-8deg);
+    }
+
+    40%{
+        transform:translateY(-4px) rotate(8deg);
+    }
+
+    60%{
+        transform:translateY(-4px) rotate(-6deg);
+    }
+
+    80%{
+        transform:translateY(-4px) rotate(6deg);
+    }
+
+    100%{
+        transform:translateY(-4px) rotate(0deg);
+    }
 
 }
 
@@ -173,42 +215,59 @@ Cards
 Textarea
 ========================*/
 
+/*========================
+Requirement Textarea
+========================*/
+
 textarea{
 
     width:100%;
-    min-height:190px;
+
+    min-height:135px;
 
     background:var(--bg2);
 
-    color:white;
+    color:#fff;
 
-    border:2px solid transparent;
+    border:2px solid #30265f;
 
     border-radius:14px;
 
-    padding:18px;
+    padding:16px 18px;
 
     resize:vertical;
 
     outline:none;
 
-    font-size:14px;
+    font-size:17px;
+
+    line-height:1.7;
+
+    cursor:text;
 
     transition:.3s;
+
+    margin-top:16px;
 
 }
 
 textarea::placeholder{
 
-    color:#9b97b8;
+    color:#a79ccf;
+
+    line-height:1.8;
 
 }
 
 textarea:focus{
 
-    border-color:var(--primary);
+    background:#1d1738;
 
-    box-shadow:0 0 0 4px rgba(124,58,237,.25);
+    border-color:#8b5cf6;
+
+    box-shadow:
+        0 0 0 3px rgba(124,58,237,.20),
+        0 0 18px rgba(124,58,237,.28);
 
 }
 
