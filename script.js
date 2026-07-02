@@ -57,9 +57,17 @@ async function generateTestCases() {
     clearError();
     showLoading(true);
 
+    // Automatically use the correct backend
+    const API_URL =
+        (window.location.hostname === "127.0.0.1" ||
+         window.location.hostname === "localhost") &&
+        window.location.port === "5500"
+            ? "http://localhost:3000/generate"
+            : `${window.location.origin}/generate`;
+
     try {
 
-        const response = await fetch(`${window.location.origin}/generate`, {
+        const response = await fetch(API_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -69,7 +77,20 @@ async function generateTestCases() {
             })
         });
 
-        const data = await response.json();
+        // Read response safely
+        const text = await response.text();
+
+        if (!text) {
+            throw new Error("Server returned an empty response.");
+        }
+
+        let data;
+
+        try {
+            data = JSON.parse(text);
+        } catch {
+            throw new Error("Invalid response received from server.");
+        }
 
         if (!response.ok) {
             throw new Error(data.error || "Failed to generate test cases.");
@@ -78,6 +99,8 @@ async function generateTestCases() {
         renderTable(data.testCases || []);
 
     } catch (err) {
+
+        console.error(err);
 
         showError(err.message || "Something went wrong!");
 
