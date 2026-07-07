@@ -13,8 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
 </head>
 
@@ -26,9 +25,9 @@
 
         <header>
 
-     <div class="logo">
-    <i class="fa-solid fa-robot"></i>
-</div>
+            <div class="logo">
+                <i class="fa-solid fa-robot"></i>
+            </div>
 
             <h1>TestPilot</h1>
 
@@ -43,35 +42,147 @@
         <section class="card">
 
             <div class="card-title">
-
                 <i class="fa-solid fa-file-lines"></i>
-
                 <span>User Story / Requirement</span>
+            </div>
+
+            <textarea id="requirement" maxlength="12000" placeholder="Describe what you want to test..."></textarea>
+
+            <div class="character-count">
+                <span id="charCount">0</span> / 12,000 characters
+            </div>
+
+            <!-- ================= Test Types ================= -->
+
+            <div class="test-type-section">
+
+                <div class="test-type-header">
+
+                    <h3>
+                        <i class="fa-solid fa-list-check"></i>
+                        Test Types
+                        <span>(Choose 1–4)</span>
+                    </h3>
+
+                </div>
+
+                <div class="test-grid">
+
+                    <label class="test-card">
+                        <input type="checkbox" value="Functional">
+                        <span class="checkmark"></span>
+                        <i class="fa-solid fa-list-check"></i>
+                        <span>Functional</span>
+                    </label>
+
+                    <label class="test-card">
+                        <input type="checkbox" value="UI">
+                        <span class="checkmark"></span>
+                        <i class="fa-solid fa-desktop"></i>
+                        <span>UI</span>
+                    </label>
+
+                    <label class="test-card">
+                        <input type="checkbox" value="API">
+                        <span class="checkmark"></span>
+                        <i class="fa-solid fa-plug"></i>
+                        <span>API</span>
+                    </label>
+
+                    <label class="test-card">
+                        <input type="checkbox" value="Integration">
+                        <span class="checkmark"></span>
+                        <i class="fa-solid fa-link"></i>
+                        <span>Integration</span>
+                    </label>
+
+                    <label class="test-card">
+                        <input type="checkbox" value="Performance">
+                        <span class="checkmark"></span>
+                        <i class="fa-solid fa-gauge-high"></i>
+                        <span>Performance</span>
+                    </label>
+
+                    <label class="test-card">
+                        <input type="checkbox" value="Security">
+                        <span class="checkmark"></span>
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Security</span>
+                    </label>
+
+                    <label class="test-card">
+                        <input type="checkbox" value="Accessibility">
+                        <span class="checkmark"></span>
+                        <i class="fa-solid fa-universal-access"></i>
+                        <span>Accessibility</span>
+                    </label>
+
+                    <label class="test-card">
+                        <input type="checkbox" value="Regression">
+                        <span class="checkmark"></span>
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Regression</span>
+                    </label>
+
+                    <label class="test-card">
+                        <input type="checkbox" value="Smoke">
+                        <span class="checkmark"></span>
+                        <i class="fa-solid fa-fire"></i>
+                        <span>Smoke</span>
+                    </label>
+
+                    <label class="test-card">
+                        <input type="checkbox" value="Unit">
+                        <span class="checkmark"></span>
+                        <i class="fa-solid fa-cube"></i>
+                        <span>Unit</span>
+                    </label>
+
+                    <label class="test-card">
+                        <input type="checkbox" value="Database">
+                        <span class="checkmark"></span>
+                        <i class="fa-solid fa-database"></i>
+                        <span>Database</span>
+                    </label>
+
+                    <label class="test-card">
+                        <input type="checkbox" value="Positive">
+                        <span class="checkmark"></span>
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Positive</span>
+                    </label>
+
+                    <label class="test-card">
+                        <input type="checkbox" value="Negative">
+                        <span class="checkmark"></span>
+                        <i class="fa-solid fa-circle-xmark"></i>
+                        <span>Negative</span>
+                    </label>
+
+                </div>
+
+                <div class="selected-count">
+
+                    Selected:
+                    <strong id="selectedCount">0</strong>/4
+                    test types
+
+                </div>
 
             </div>
 
-            <textarea
-    id="requirement"
-    spellcheck="true"
-    placeholder="Describe what you want to test...">
-</textarea>
+            <!-- ================= Buttons ================= -->
 
             <div class="buttons">
 
                 <button id="generateBtn">
-
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
-
                     Generate Test Cases
-
                 </button>
 
                 <button id="clearBtn">
-
                     <i class="fa-solid fa-trash"></i>
-
                     Clear
-
                 </button>
 
             </div>
@@ -128,6 +239,7 @@
                         <tr>
 
                             <th style="width:70px;">ID</th>
+                            <th style="width:110px;">Type</th>
                             <th style="min-width:260px;">Title</th>
                             <th style="min-width:150px;">Module</th>
                             <th style="width:110px;">Priority</th>
@@ -143,7 +255,7 @@
 
                         <tr>
 
-                            <td colspan="7" class="empty">
+                            <td colspan="8" class="empty">
 
                                 <i class="fa-regular fa-folder-open"></i>
 

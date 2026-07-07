@@ -1,311 +1,555 @@
+// ======================================================
+// QA Test Case Generator
+// script.js (Part 1)
+// ======================================================
+
 // ================================
-// QA Test Case Generator - script.js
+// DOM Elements
 // ================================
 
 const requirementEl = document.getElementById("requirement");
+
 const generateBtn = document.getElementById("generateBtn");
+
 const clearBtn = document.getElementById("clearBtn");
 
 const copyBtn = document.getElementById("copyBtn");
+
 const downloadBtn = document.getElementById("downloadBtn");
 
 const loadingEl = document.getElementById("loading");
+
 const errorBox = document.getElementById("errorBox");
 
 const tableBody = document.getElementById("tableBody");
 
+const charCount = document.getElementById("charCount");
+
+const selectedCount = document.getElementById("selectedCount");
+
+const testTypeCheckboxes = document.querySelectorAll(
+  ".test-card input[type='checkbox']",
+);
+
+const MAX_SELECTION = 4;
+
+// ================================
+// Character Counter
+// ================================
+
+function updateCharacterCount() {
+  charCount.textContent = requirementEl.value.length;
+}
+
+requirementEl.addEventListener("input", updateCharacterCount);
+
+updateCharacterCount();
+
+// ================================
+// Selected Test Types Counter
+// ================================
+
+function updateSelectedCounter() {
+  const totalSelected = document.querySelectorAll(
+    ".test-card input:checked",
+  ).length;
+
+  selectedCount.textContent = totalSelected;
+}
+
+// ================================
+// Get Selected Test Types
+// ================================
+
+function getSelectedTestTypes() {
+  return Array.from(document.querySelectorAll(".test-card input:checked")).map(
+    (item) => item.value,
+  );
+}
+
+// ================================
+// Test Type Selection Logic
+// ================================
+
+testTypeCheckboxes.forEach((box) => {
+  box.addEventListener("change", function () {
+    const selected = getSelectedTestTypes();
+
+    if (selected.length > MAX_SELECTION) {
+      this.checked = false;
+
+      showToast(
+        `You can select maximum ${MAX_SELECTION} test types.`,
+
+        "error",
+      );
+
+      return;
+    }
+
+    updateSelectedCounter();
+  });
+});
+
+updateSelectedCounter();
+
 // ================================
 // Toast Notification
 // ================================
+
 function showToast(message, type = "success") {
+  const toast = document.getElementById("toast");
 
-    const toast = document.getElementById("toast");
-    const toastMessage = document.getElementById("toastMessage");
-    const toastIcon = toast.querySelector("i");
+  const toastMessage = document.getElementById("toastMessage");
 
-    toastMessage.textContent = message;
+  const toastIcon = toast.querySelector("i");
 
-    if (type === "success") {
-        toastIcon.className = "fa-solid fa-circle-check";
-        toast.style.borderLeftColor = "#22c55e";
-        toastIcon.style.color = "#22c55e";
-    } else {
-        toastIcon.className = "fa-solid fa-circle-xmark";
-        toast.style.borderLeftColor = "#ef4444";
-        toastIcon.style.color = "#ef4444";
-    }
+  toastMessage.textContent = message;
 
-    toast.classList.add("show");
+  if (type === "success") {
+    toastIcon.className = "fa-solid fa-circle-check";
 
-    setTimeout(() => {
-        toast.classList.remove("show");
-    }, 2500);
+    toast.style.borderLeftColor = "#22c55e";
+
+    toastIcon.style.color = "#22c55e";
+  } else {
+    toastIcon.className = "fa-solid fa-circle-xmark";
+
+    toast.style.borderLeftColor = "#ef4444";
+
+    toastIcon.style.color = "#ef4444";
+  }
+
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2500);
 }
 
 // ================================
-// API CALL
+// Helper Functions
 // ================================
-async function generateTestCases() {
 
-    const requirement = requirementEl.value.trim();
-
-    if (!requirement) {
-        showError("Please enter a requirement first.");
-        return;
-    }
-
-    clearError();
-    showLoading(true);
-
-    // Automatically use the correct backend
-    const API_URL =
-        (window.location.hostname === "127.0.0.1" ||
-         window.location.hostname === "localhost") &&
-        window.location.port === "5500"
-            ? "http://localhost:3000/generate"
-            : `${window.location.origin}/generate`;
-
-    try {
-
-        const response = await fetch(API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                requirement
-            })
-        });
-
-        // Read response safely
-        const text = await response.text();
-
-        if (!text) {
-            throw new Error("Server returned an empty response.");
-        }
-
-        let data;
-
-        try {
-            data = JSON.parse(text);
-        } catch {
-            throw new Error("Invalid response received from server.");
-        }
-
-        if (!response.ok) {
-            throw new Error(data.error || "Failed to generate test cases.");
-        }
-
-        renderTable(data.testCases || []);
-
-    } catch (err) {
-
-        console.error(err);
-
-        showError(err.message || "Something went wrong!");
-
-    } finally {
-
-        showLoading(false);
-
-    }
-}
-
-// ================================
-// Render Table
-// ================================
-function renderTable(testCases) {
-
-    tableBody.innerHTML = "";
-
-    if (!testCases.length) {
-
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="7" class="empty">
-                    No Test Cases Found
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-    testCases.forEach((tc, index) => {
-
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-            <td>${tc.id || index + 1}</td>
-            <td>${tc.title || ""}</td>
-            <td>${tc.module || ""}</td>
-            <td>${tc.priority || ""}</td>
-            <td>${tc.preconditions || ""}</td>
-            <td>${tc.steps || ""}</td>
-            <td>${tc.expectedResult || ""}</td>
-        `;
-
-        tableBody.appendChild(row);
-
-    });
-
-}
-
-// ================================
-// Loading
-// ================================
 function showLoading(show) {
+  loadingEl.classList.toggle(
+    "hidden",
 
-    loadingEl.classList.toggle("hidden", !show);
+    !show,
+  );
 
-    generateBtn.disabled = show;
-
+  generateBtn.disabled = show;
 }
 
-// ================================
-// Error
-// ================================
-function showError(msg) {
+function showError(message) {
+  errorBox.textContent = message;
 
-    errorBox.textContent = msg;
-
-    errorBox.classList.remove("hidden");
-
+  errorBox.classList.remove("hidden");
 }
 
 function clearError() {
+  errorBox.textContent = "";
 
-    errorBox.textContent = "";
-
-    errorBox.classList.add("hidden");
-
+  errorBox.classList.add("hidden");
 }
 
-// ================================
-// Clear
-// ================================
-clearBtn.addEventListener("click", () => {
+// ======================================================
+// API Call
+// ======================================================
 
+async function generateTestCases() {
+  const requirement = requirementEl.value.trim();
+
+  if (!requirement) {
+    showError("Please enter a requirement.");
+
+    requirementEl.focus();
+
+    return;
+  }
+
+  const testTypes = getSelectedTestTypes();
+
+  if (testTypes.length === 0) {
+    showError("Please select at least one Test Type.");
+
+    showToast("Select at least one Test Type.", "error");
+
+    return;
+  }
+
+  clearError();
+
+  showLoading(true);
+
+  console.log("Selected Test Types:", testTypes);
+
+  // Localhost or Render
+  const API_URL =
+    (window.location.hostname === "127.0.0.1" ||
+      window.location.hostname === "localhost") &&
+    window.location.port === "5500"
+      ? "http://localhost:3000/generate"
+      : `${window.location.origin}/generate`;
+
+  try {
+    console.log("Requirement:", requirement);
+    console.log("Selected Test Types:", testTypes);
+
+    const response = await fetch(API_URL, {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        requirement,
+
+        testTypes,
+      }),
+    });
+
+    const text = await response.text();
+
+    if (!text) {
+      throw new Error("Server returned an empty response.");
+    }
+
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error("Invalid response received from server.");
+    }
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to generate test cases.");
+    }
+
+    renderTable(data.testCases || []);
+
+    showToast(`${data.testCases.length} Test Cases Generated Successfully`);
+  } catch (err) {
+    console.error(err);
+
+    showError(err.message || "Something went wrong.");
+
+    showToast(
+      "Failed to generate Test Cases",
+
+      "error",
+    );
+  } finally {
+    showLoading(false);
+  }
+}
+
+// ======================================================
+// Render Table
+// ======================================================
+
+function renderTable(testCases) {
+  tableBody.innerHTML = "";
+
+  if (!testCases.length) {
+    tableBody.innerHTML = `
+
+            <tr>
+
+                <td colspan="8" class="empty">
+
+                    No Test Cases Generated
+
+                </td>
+
+            </tr>
+
+        `;
+
+    return;
+  }
+
+  testCases.forEach((tc, index) => {
+    console.log(tc);
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+
+            <td>${tc.id || index + 1}</td>
+
+            <td>${tc.type || "Functional"}</td>
+
+            <td>${tc.title || ""}</td>
+
+            <td>${tc.module || ""}</td>
+
+            <td>${tc.priority || ""}</td>
+
+            <td>${tc.preconditions || ""}</td>
+
+            <td>${tc.steps || ""}</td>
+
+            <td>${tc.expectedResult || ""}</td>
+
+        `;
+
+    tableBody.appendChild(row);
+  });
+}
+
+// ======================================================
+// Generate Button
+// ======================================================
+
+generateBtn.addEventListener(
+  "click",
+
+  generateTestCases,
+);
+
+// ======================================================
+// Ctrl + Enter
+// ======================================================
+
+requirementEl.addEventListener(
+  "keydown",
+
+  function (e) {
+    if (e.ctrlKey && e.key === "Enter") {
+      generateTestCases();
+    }
+  },
+);
+
+// ======================================================
+// Clear Button
+// ======================================================
+
+clearBtn.addEventListener(
+  "click",
+
+  () => {
     requirementEl.value = "";
 
-    tableBody.innerHTML = `
-        <tr>
-            <td colspan="7" class="empty">
-                No Test Cases Generated
-            </td>
-        </tr>
-    `;
+    updateCharacterCount();
 
     clearError();
 
-});
+    testTypeCheckboxes.forEach((box) => {
+      box.checked = false;
+    });
 
-// ================================
-// Generate
-// ================================
-generateBtn.addEventListener("click", generateTestCases);
+    updateSelectedCounter();
 
-requirementEl.addEventListener("keydown", (e) => {
+    tableBody.innerHTML = `
 
-    if (e.ctrlKey && e.key === "Enter") {
+            <tr>
 
-        generateTestCases();
+                <td colspan="8" class="empty">
 
-    }
+                    No Test Cases Generated
 
-});
+                </td>
 
-// ================================
-// Copy
-// ================================
+            </tr>
+
+        `;
+
+    showToast("Cleared Successfully");
+  },
+);
+
+// ======================================================
+// COPY TEST CASES
+// ======================================================
+
 copyBtn.addEventListener("click", async () => {
+  const rows = document.querySelectorAll("#tableBody tr");
 
-    let text = "";
+  if (!rows.length || rows[0].querySelector(".empty")) {
+    showToast(
+      "No Test Cases Available",
 
-    const headers = document.querySelectorAll("#resultTable thead th");
+      "error",
+    );
 
-    text += Array.from(headers)
-        .map(h => h.innerText.trim())
-        .join("\t") + "\n";
+    return;
+  }
 
-    document.querySelectorAll("#tableBody tr").forEach(row => {
+  let text = "";
 
-        const cols = row.querySelectorAll("td");
+  // Table Headers
+  const headers = Array.from(
+    document.querySelectorAll("#resultTable thead th"),
+  ).map((h) => h.innerText.trim());
 
-        text += Array.from(cols)
-            .map(col => col.innerText.trim())
-            .join("\t") + "\n";
+  text += headers.join("\t") + "\n";
 
-    });
+  // Table Data
+  rows.forEach((row) => {
+    const cols = row.querySelectorAll("td");
 
-    try {
+    if (cols.length > 1) {
+      text += Array.from(cols)
 
-        await navigator.clipboard.writeText(text);
+        .map((col) =>
+          col.innerText
 
-        showToast("Test cases copied successfully!");
+            .replace(/\n/g, " ")
 
-    } catch {
+            .trim(),
+        )
 
-        showToast("Failed to copy test cases.", "error");
+        .join("\t");
 
+      text += "\n";
     }
+  });
 
+  try {
+    await navigator.clipboard.writeText(text);
+
+    showToast("Test Cases Copied Successfully");
+  } catch {
+    showToast(
+      "Copy Failed",
+
+      "error",
+    );
+  }
 });
 
-// ================================
-// Download CSV
-// ================================
+// ======================================================
+// DOWNLOAD CSV
+// ======================================================
+
 downloadBtn.addEventListener("click", () => {
+  const rows = document.querySelectorAll("#tableBody tr");
 
-    const headers = [
-        "ID",
-        "Title",
-        "Module",
-        "Priority",
-        "Preconditions",
-        "Steps",
-        "Expected Result"
-    ];
+  if (!rows.length || rows[0].querySelector(".empty")) {
+    showToast(
+      "No Test Cases Available",
 
-    const csv = [];
+      "error",
+    );
 
-    csv.push(headers.join(","));
+    return;
+  }
 
-    document.querySelectorAll("#tableBody tr").forEach(row => {
+  const csv = [];
 
-        const cols = row.querySelectorAll("td");
+  // Header
 
-        if (cols.length === 7) {
+  const headers = Array.from(
+    document.querySelectorAll("#resultTable thead th"),
+  ).map((h) => `"${h.innerText.trim()}"`);
 
-            const rowData = Array.from(cols).map(col =>
-                `"${col.innerText.replace(/"/g, '""')}"`
-            );
+  csv.push(headers.join(","));
 
-            csv.push(rowData.join(","));
+  // Body
 
-        }
+  rows.forEach((row) => {
+    const cols = row.querySelectorAll("td");
 
-    });
+    if (cols.length > 1) {
+      csv.push(
+        Array.from(cols)
 
-    const blob = new Blob([csv.join("\n")], {
-        type: "text/csv;charset=utf-8;"
-    });
+          .map(
+            (col) =>
+              `"${col.innerText
 
-    const url = URL.createObjectURL(blob);
+                .replace(/"/g, '""')
 
-    const link = document.createElement("a");
+                .replace(/\n/g, " ")
 
-    link.href = url;
-    link.download = "QA_Test_Cases.csv";
+                .trim()}"`,
+          )
 
-    document.body.appendChild(link);
+          .join(","),
+      );
+    }
+  });
 
-    link.click();
+  const blob = new Blob(
+    [csv.join("\n")],
 
-    document.body.removeChild(link);
+    {
+      type: "text/csv;charset=utf-8;",
+    },
+  );
 
-    URL.revokeObjectURL(url);
+  const url = URL.createObjectURL(blob);
 
-    showToast("Test cases downloaded successfully!");
+  const link = document.createElement("a");
 
+  const now = new Date();
+
+  const fileName = `QA_Test_Cases_${now.getFullYear()}-${String(
+    now.getMonth() + 1,
+  ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}_${String(
+    now.getHours(),
+  ).padStart(2, "0")}-${String(now.getMinutes()).padStart(2, "0")}.csv`;
+
+  link.href = url;
+
+  link.download = fileName;
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(url);
+
+  showToast("CSV Downloaded Successfully");
 });
+
+// ======================================================
+// FUTURE HELPER FUNCTIONS
+// ======================================================
+
+// Total Test Cases
+
+function getTotalTestCases() {
+  return document.querySelectorAll("#tableBody tr").length;
+}
+
+// Total Selected Test Types
+
+function getSelectedCount() {
+  return document.querySelectorAll(".test-card input:checked").length;
+}
+
+// Current Date
+
+function getCurrentDate() {
+  return new Date().toLocaleDateString();
+}
+
+// Current Time
+
+function getCurrentTime() {
+  return new Date().toLocaleTimeString();
+}
+
+// ======================================================
+// PAGE LOADED
+// ======================================================
+
+window.addEventListener(
+  "load",
+
+  () => {
+    updateCharacterCount();
+
+    updateSelectedCounter();
+
+    clearError();
+
+    console.log("QA Test Case Generator v2.0 Loaded");
+  },
+);
