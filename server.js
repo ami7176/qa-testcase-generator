@@ -155,19 +155,20 @@ app.post("/generate", async (req, res) => {
       });
     }
 
+   
+    const selectedTypes = Array.isArray(testTypes)
+      ? testTypes.filter(type => AVAILABLE_TEST_TYPES.includes(type))
+      : [];
+
+    // Default to Functional if nothing is selected
     if (selectedTypes.length === 0) {
       selectedTypes.push("Functional");
     }
-    // Filter only supported test types
-    const selectedTypes = Array.isArray(testTypes)
-      ? testTypes.filter((type) => AVAILABLE_TEST_TYPES.includes(type))
-      : [];
 
     const allTestCases = [];
 
     for (const type of selectedTypes) {
       console.log("Generating:", type);
-      console.log(prompt);
       const prompt = buildPrompt(requirement, type);
 
       const response = await ai.models.generateContent({
